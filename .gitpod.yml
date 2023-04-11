@@ -1,0 +1,11 @@
+vscode: 
+  extensions:
+    - ms-python.isort
+    - ms-python.python
+    - charliermarsh.ruff
+    
+tasks:
+  - name: OpenAI interface
+    command: pip install -r requirements.txt && python3 interactive-playground.py
+  - name: Temporal Dev Server
+    command: curl -sSf https://temporal.download/cli.sh | sh & echo export PATH="\$PATH:/home/gitpod/.temporalio/bin" >> ~/.bashrc & source ~/.bashrc & temporal server start-dev
