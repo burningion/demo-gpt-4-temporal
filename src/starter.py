@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from temporalio.client import Client
 
-from .tasks import FileProcessing
+from tasks import FileProcessing
 
 
 async def main():
