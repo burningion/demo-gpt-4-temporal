@@ -6,7 +6,10 @@ from pathlib import Path
 
 from temporalio import activity, workflow
 from temporalio.common import RetryPolicy
+from temporalio.exceptions import ApplicationError
 
+with workflow.unsafe.imports_passed_through():
+    import aiohttp
 
 def _get_delay_secs() -> float:
     return 3
@@ -71,9 +74,15 @@ async def download_file_to_worker_filesystem(details: DownloadObj) -> str:
     # or disk IO, developers should use loop.run_in_executor or change this activity
     # to be synchronous. Also like for all non-immediate activities, be sure to
     # heartbeat during download.
-    await asyncio.sleep(_get_delay_secs())
-    body = "downloaded body"
-    write_file(path, body)
+    async with aiohttp.ClientSession() as sess:
+        async with sess.get(details.url) as resp:
+            # We don't want to retry client failure
+            if resp.status >= 400 and resp.status < 500:
+                raise ApplicationError(f"Status: {resp.status}", resp.json(), non_retryable=True)
+            # Otherwise, fail on bad status which will be inherently retried
+            with open(path, 'wb') as fd:
+                async for chunk in resp.content.iter_chunked(10):
+                    fd.write(chunk)
     return str(path)
 
 
@@ -113,7 +122,7 @@ class FileProcessing:
         workflow.logger.info(f"Matching workflow to worker {unique_worker_task_queue}")
 
         download_params = DownloadObj(
-            url="http://temporal.io",
+            url="https://www.temporal.io",
             unique_worker_id=unique_worker_task_queue,
             workflow_uuid=str(workflow.uuid4()),
         )
