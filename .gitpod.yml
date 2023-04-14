@@ -11,3 +11,8 @@ tasks:
     command: pip install -r requirements.txt && python3 interactive-playground.py
   - name: Temporal Dev Server
     command:  temporal server start-dev
+
+ports:
+  - port: 8233
+    onOpen: open-preview
+    name: Temporal Frontend
