@@ -10,6 +10,7 @@ from temporalio.exceptions import ApplicationError
 
 with workflow.unsafe.imports_passed_through():
     import aiohttp
+    from unstructured.partition.html import partition_html
 
 def _get_delay_secs() -> float:
     return 3
@@ -25,10 +26,9 @@ def write_file(path: Path, body: str) -> None:
         handle.write(body)
 
 
-def read_file(path) -> bytes:
+def read_file(path) -> list:
     """Convenience read wrapper for mocking FS"""
-    with open(path, "rb") as handle:
-        return handle.read()
+    return partition_html(path)
 
 
 def delete_file(path) -> None:
@@ -44,9 +44,9 @@ def create_filepath(unique_worker_id: str, workflow_uuid: str) -> Path:
     return filepath
 
 
-def process_file_contents(file_content: bytes) -> str:
+def process_file_contents(file_content: list) -> str:
     """Returns hash of file string"""
-    return sha256(file_content).hexdigest()
+    return ["\n\n".join([str(el) for el in file_content])][0]
 
 
 @dataclass
@@ -101,7 +101,7 @@ async def clean_up_file_from_worker_filesystem(path: str) -> None:
     """Deletes the file created in the first activity, but leaves the folder"""
     await asyncio.sleep(_get_delay_secs())
     activity.logger.info(f"Removing {path}")
-    delete_file(path)
+    #delete_file(path)
 
 
 @workflow.defn
