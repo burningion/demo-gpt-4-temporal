@@ -7,8 +7,10 @@ vscode:
     - charliermarsh.ruff
     
 tasks:
-  - name: OpenAI interface
+  - name: OpenAI Chat Interface
     command: pip install -r requirements.txt && python3 interactive-playground.py
+  - name: Temporal Dev Env
+    command: python -m venv env && source env/bin/activate && pip install -r src/requirements.txt
   - name: Temporal Dev Server
     command:  temporal server start-dev
 
