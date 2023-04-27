@@ -11,6 +11,8 @@ from temporalio.exceptions import ApplicationError
 with workflow.unsafe.imports_passed_through():
     import aiohttp
     from unstructured.partition.html import partition_html
+    import pinecone
+    import tiktoken
 
 def _get_delay_secs() -> float:
     return 3
@@ -28,7 +30,7 @@ def write_file(path: Path, body: str) -> None:
 
 def read_file(path) -> list:
     """Convenience read wrapper for mocking FS"""
-    return partition_html(path)
+    return partition_html(filename=path)
 
 
 def delete_file(path) -> None:
@@ -45,8 +47,10 @@ def create_filepath(unique_worker_id: str, workflow_uuid: str) -> Path:
 
 
 def process_file_contents(file_content: list) -> str:
-    """Returns hash of file string"""
-    return ["\n\n".join([str(el) for el in file_content])][0]
+    """TODO: create embeddings and post to pinecone"""
+    tokenizer = tiktoken.get_encoding('p50k_base')
+    
+    return 
 
 
 @dataclass
@@ -122,7 +126,7 @@ class FileProcessing:
         workflow.logger.info(f"Matching workflow to worker {unique_worker_task_queue}")
 
         download_params = DownloadObj(
-            url="https://www.temporal.io",
+            url="https://www.gitpod.io/docs/references/gitpod-yml",
             unique_worker_id=unique_worker_task_queue,
             workflow_uuid=str(workflow.uuid4()),
         )
