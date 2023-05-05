@@ -10,13 +10,25 @@ from temporalio.exceptions import ApplicationError
 
 with workflow.unsafe.imports_passed_through():
     import aiohttp
-    from unstructured.partition.html import partition_html
     import pinecone
     import tiktoken
+    from langchain.document_loaders import BSHTMLLoader
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    from uuid import uuid4
+    from tqdm.auto import tqdm
+    import openai
+    import os
 
 def _get_delay_secs() -> float:
-    return 3
+    return 3 
 
+def tiktoken_len(text) -> int:
+    tokenizer = tiktoken.get_encoding('p50k_base')
+    tokens = tokenizer.encode(
+        text,
+        disallowed_special=()
+    )
+    return len(tokens)
 
 def _get_local_path() -> Path:
     return Path(__file__).parent / "demo_fs"
@@ -29,8 +41,10 @@ def write_file(path: Path, body: str) -> None:
 
 
 def read_file(path) -> list:
-    """Convenience read wrapper for mocking FS"""
-    return partition_html(filename=path)
+    """Read file and load with BS4"""
+    loader = BSHTMLLoader(path)
+    data = loader.load()
+    return data
 
 
 def delete_file(path) -> None:
@@ -47,10 +61,68 @@ def create_filepath(unique_worker_id: str, workflow_uuid: str) -> Path:
 
 
 def process_file_contents(file_content: list) -> str:
-    """TODO: create embeddings and post to pinecone"""
-    tokenizer = tiktoken.get_encoding('p50k_base')
+    """split, create embeddings, and post to pinecone"""
+    text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=400,
+    chunk_overlap=20,
+    length_function=tiktoken_len,
+    separators=["\n\n", "\n", " ", ""]
+    )
+    chunks = []
+
+    for idx, record in enumerate(tqdm(data)):
+        texts = text_splitter.split_text(record['text'])
+        chunks.extend([{
+          'id': str(uuid4()),
+         'text': texts[i],
+         'chunk': i,
+          'url': record['url']
+       } for i in range(len(texts))])
     
-    return 
+    openai.api_key = os.environ['OPENAI_API_KEY']
+    embed_model = "text-embedding-ada-002"
+    index_name = os.environ['PINECONE_INDEX']
+    pinecone.init(
+    api_key=os.environ['PINECONE_API_KEY'],  # app.pinecone.io (console)
+    environment=os.environ['PINECONE_ENVIRONMENT']  # next to API key in console
+    )
+
+    # check if index already exists (it shouldn't if this is first time)
+    if index_name not in pinecone.list_indexes():
+        # if does not exist, create index
+        pinecone.create_index(
+            index_name,
+            dimension=len(res['data'][0]['embedding']),
+            metric='dotproduct'
+        )
+    # connect to index
+    index = pinecone.GRPCIndex(index_name)
+
+    batch_size = 100  # how many embeddings we create and insert at once
+
+    for i in tqdm(range(0, len(chunks), batch_size)):
+        # find end of batch
+        i_end = min(len(chunks), i+batch_size)
+        meta_batch = chunks[i:i_end]
+        # get ids
+        ids_batch = [x['id'] for x in meta_batch]
+        # get texts to encode
+        texts = [x['text'] for x in meta_batch]
+        # create embeddings (try-except added to avoid RateLimitError)
+        
+        res = openai.Embedding.create(input=texts, engine=embed_model)
+        embeds = [record['embedding'] for record in res['data']]
+        # cleanup metadata
+        meta_batch = [{
+            'text': x['text'],
+            'chunk': x['chunk'],
+            'url': x['url']
+        } for x in meta_batch]
+        to_upsert = list(zip(ids_batch, embeds, meta_batch))
+        # upsert to Pinecone
+        index.upsert(vectors=to_upsert)
+
+    return f"Processed {len(chunks)} documents to pinecone"
 
 
 @dataclass
