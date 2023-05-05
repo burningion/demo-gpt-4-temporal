@@ -1,7 +1,6 @@
 import asyncio
 from dataclasses import dataclass
 from datetime import timedelta
-from hashlib import sha256
 from pathlib import Path
 
 from temporalio import activity, workflow
@@ -44,7 +43,12 @@ def read_file(path) -> list:
     """Read file and load with BS4"""
     loader = BSHTMLLoader(path)
     data = loader.load()
-    return data
+    plain_text = []
+    for i in range(len(data)):
+        a = data[i]
+        plain_text.append({"text": a.page_content,
+                            "source": a.metadata['source']})
+    return plain_text
 
 
 def delete_file(path) -> None:
@@ -69,14 +73,14 @@ def process_file_contents(file_content: list) -> str:
     separators=["\n\n", "\n", " ", ""]
     )
     chunks = []
-
-    for idx, record in enumerate(tqdm(data)):
+    
+    for idx, record in enumerate(tqdm(file_content)):
         texts = text_splitter.split_text(record['text'])
         chunks.extend([{
           'id': str(uuid4()),
          'text': texts[i],
          'chunk': i,
-          'url': record['url']
+          'url': record['source']
        } for i in range(len(texts))])
     
     openai.api_key = os.environ['OPENAI_API_KEY']
