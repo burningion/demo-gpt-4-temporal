@@ -90,7 +90,13 @@ def process_file_contents(file_content: list) -> str:
     api_key=os.environ['PINECONE_API_KEY'],  # app.pinecone.io (console)
     environment=os.environ['PINECONE_ENVIRONMENT']  # next to API key in console
     )
-
+    
+    res = openai.Embedding.create(
+        input=[
+            "Sample document text goes here",
+            "there will be several phrases in each batch"
+        ], engine=embed_model
+    )
     # check if index already exists (it shouldn't if this is first time)
     if index_name not in pinecone.list_indexes():
         # if does not exist, create index
