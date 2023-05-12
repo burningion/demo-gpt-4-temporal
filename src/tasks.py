@@ -193,7 +193,7 @@ async def clean_up_file_from_worker_filesystem(path: str) -> None:
 @workflow.defn
 class FileProcessing:
     @workflow.run
-    async def run(self) -> str:
+    async def run(self, url: str) -> str:
         """Workflow implementing the basic file processing example.
 
         First, a worker is selected randomly. This is the "sticky worker" on which
@@ -201,6 +201,7 @@ class FileProcessing:
         with a file cleanup if an error occurs.
         """
         workflow.logger.info("Searching for available worker")
+        workflow.logger.info(f"url: {url}")
         unique_worker_task_queue = await workflow.execute_activity(
             activity=get_available_task_queue,
             start_to_close_timeout=timedelta(seconds=10),
@@ -208,7 +209,7 @@ class FileProcessing:
         workflow.logger.info(f"Matching workflow to worker {unique_worker_task_queue}")
 
         download_params = DownloadObj(
-            url="https://www.gitpod.io/docs/references/gitpod-yml",
+            url=url,
             unique_worker_id=unique_worker_task_queue,
             workflow_uuid=str(workflow.uuid4()),
         )

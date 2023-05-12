@@ -15,6 +15,7 @@ async def main():
     for idx in range(10):
         result = client.execute_workflow(
             FileProcessing.run,
+            "https://www.gitpod.io/docs/references/gitpod-yml",
             id=f"activity_sticky_queue-workflow-id-{idx}",
             task_queue="activity_sticky_queue-distribution-queue",
         )
