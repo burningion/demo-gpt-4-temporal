@@ -15,7 +15,7 @@ pinecone.init(
 )
 index = pinecone.GRPCIndex(index_name)
 
-query = "how do I use create a gitpod yaml?"
+query = "how do I create a gitpod yaml for a python app?"
 
 res = openai.Embedding.create(
     input=[query],
