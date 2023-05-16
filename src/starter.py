@@ -5,8 +5,9 @@ from temporalio.client import Client
 
 from tasks import FileProcessing
 
-# let's populate pinecone with the docs
+# URLs to populate pinecone with docs
 urls = [
+    "https://www.gitpod.io/guides/gitpodify",
     "https://www.gitpod.io/docs/references/gitpod-yml",
     "https://www.gitpod.io/docs/introduction",
     "https://www.gitpod.io/docs/introduction/getting-started",

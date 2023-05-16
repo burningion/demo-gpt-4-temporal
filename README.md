@@ -8,20 +8,23 @@ Can then be used to add your data / context to your prompt, adding your knowledg
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/burningion/demo-gitpod-temporal)
 
-# Running the workflow
+# Running the Retrieval Augmentation  workflow
+
+This example workflow scrapes a set of webpages from the Gitpod website, looking to steer GPT-4 with augmented data as to how to build a Gitpodified project.
+
 
 To run the workers you'll need to run the following:
 
 ```bash
 $ cd src
-$ python worker.py
+$ python3 worker.py
 ```
 
 In another terminal:
 
 ```bash
 $ cd src
-$ python starter.py
+$ python3 starter.py
 ```
 
-Check the output by going to port `8233`.
+Check the output by going to port `8233` in Gitpod, you'll see your workflows executing.
