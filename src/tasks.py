@@ -204,7 +204,7 @@ class FileProcessing:
         workflow.logger.info(f"url: {url}")
         unique_worker_task_queue = await workflow.execute_activity(
             activity=get_available_task_queue,
-            start_to_close_timeout=timedelta(seconds=10),
+            start_to_close_timeout=timedelta(seconds=120),
         )
         workflow.logger.info(f"Matching workflow to worker {unique_worker_task_queue}")
 
@@ -217,7 +217,7 @@ class FileProcessing:
         download_path = await workflow.execute_activity(
             download_file_to_worker_filesystem,
             download_params,
-            start_to_close_timeout=timedelta(seconds=10),
+            start_to_close_timeout=timedelta(seconds=120),
             task_queue=unique_worker_task_queue,
         )
 
@@ -237,7 +237,7 @@ class FileProcessing:
             await workflow.execute_activity(
                 clean_up_file_from_worker_filesystem,
                 download_path,
-                start_to_close_timeout=timedelta(seconds=10),
+                start_to_close_timeout=timedelta(seconds=120),
                 task_queue=unique_worker_task_queue,
             )
         return checksum
