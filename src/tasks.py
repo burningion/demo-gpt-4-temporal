@@ -39,7 +39,7 @@ def write_file(path: Path, body: str) -> None:
         handle.write(body)
 
 
-def read_file(path) -> list:
+def read_file(path, url) -> list:
     """Read file and load with BS4"""
     loader = BSHTMLLoader(path)
     data = loader.load()
@@ -47,7 +47,7 @@ def read_file(path) -> list:
     for i in range(len(data)):
         a = data[i]
         plain_text.append({"text": a.page_content,
-                            "source": a.metadata['source']})
+                            "source": url})
     return plain_text
 
 
@@ -141,6 +141,10 @@ class DownloadObj:
     unique_worker_id: str
     workflow_uuid: str
 
+@dataclass
+class DownloadedObj:
+    url: str
+    path: str
 
 @activity.defn
 async def get_available_task_queue() -> str:
@@ -173,21 +177,19 @@ async def download_file_to_worker_filesystem(details: DownloadObj) -> str:
 
 
 @activity.defn
-async def work_on_file_in_worker_filesystem(path: str) -> str:
+async def work_on_file_in_worker_filesystem(dl_file: DownloadedObj) -> str:
     """Processing the file, in this case identical MD5 hashes"""
-    content = read_file(path)
+    content = read_file(dl_file.path, dl_file.url)
     checksum = process_file_contents(content)
-    await asyncio.sleep(_get_delay_secs())
-    activity.logger.info(f"Did some work on {path}, checksum {checksum}")
+    activity.logger.info(f"Did some work on {dl_file.path} with the URL {dl_file.url}, checksum {checksum}")
     return checksum
 
 
 @activity.defn
 async def clean_up_file_from_worker_filesystem(path: str) -> None:
     """Deletes the file created in the first activity, but leaves the folder"""
-    await asyncio.sleep(_get_delay_secs())
     activity.logger.info(f"Removing {path}")
-    #delete_file(path)
+    delete_file(path)
 
 
 @workflow.defn
@@ -221,11 +223,13 @@ class FileProcessing:
             task_queue=unique_worker_task_queue,
         )
 
+        downloaded_file = DownloadedObj(url=url, path=download_path)
+
         checksum = "failed execution"  # Sentinel value
         try:
             checksum = await workflow.execute_activity(
                 work_on_file_in_worker_filesystem,
-                download_path,
+                downloaded_file,
                 start_to_close_timeout=timedelta(seconds=120),
                 retry_policy=RetryPolicy(
                     maximum_attempts=2,
