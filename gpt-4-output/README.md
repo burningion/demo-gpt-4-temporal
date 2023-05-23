@@ -115,6 +115,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ## Prompt: write a .gitpod.yml file for a fastapi python project. the application is named `main.py`, and the command to run it is `uvicorn main:app --host 0.0.0.0 --port 8000`. the other library dependencies are fastapi uvicorn python-dotenv python-social-auth boto3
 
+## Augmented GPT-4 Output:
 
 Here's a .gitpod.yml file for your FastAPI Python project based on the provided information:
 
