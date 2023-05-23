@@ -1,0 +1,9 @@
+image: gitpod/workspace-python
+
+tasks:
+  - init: pip install fastapi uvicorn python-dotenv python-social-auth boto3
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+          
+ports:
+  - port: 8000
+    onOpen: open-preview

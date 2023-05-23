@@ -23,7 +23,7 @@ urls = [
     "https://www.gitpod.io/docs/configure/self-hosted/latest",
     "https://www.gitpod.io/docs/configure/billing",
     "https://www.gitpod.io/docs/references/gitpod-cli",
-    "https://www.gitpod.io/docs/help/troubleshooting"
+    "https://www.gitpod.io/docs/help/troubleshooting",
 ]
 
 async def main():

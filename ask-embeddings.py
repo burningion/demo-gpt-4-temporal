@@ -34,7 +34,7 @@ contexts = [item['metadata']['text'] for item in res['matches']]
 augmented_query = "\n\n---\n\n".join(contexts)+"\n\n-----\n\n"+query
 
 # system message to 'prime' the model
-primer = f"""You are Q&A bot. A highly intelligent system that answers
+primer = f"""you are an experienced frontend developer who cares deeply about code readability. A highly intelligent developer that answers
 user questions based on the information provided by the user above
 each question. If the information can not be found in the information
 provided by the user you truthfully say "I don't know".

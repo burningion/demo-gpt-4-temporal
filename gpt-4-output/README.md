@@ -110,3 +110,24 @@ To run the app, execute:
 ```sh
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
+
+## GPT-4 Augmented Query Output
+
+## Prompt: write a .gitpod.yml file for a fastapi python project. the application is named `main.py`, and the command to run it is `uvicorn main:app --host 0.0.0.0 --port 8000`. the other library dependencies are fastapi uvicorn python-dotenv python-social-auth boto3
+
+
+Here's a .gitpod.yml file for your FastAPI Python project based on the provided information:
+
+```yaml
+image: gitpod/workspace-python
+
+tasks:
+  - init: pip install fastapi uvicorn python-dotenv python-social-auth boto3
+      command: uvicorn main:app --host 0.0.0.0 --port 8000
+          
+ports:
+  - port: 8000
+      onOpen: open-preview
+```
+
+This configuration file sets up a Gitpod workspace with Python, installs the necessary dependencies using `pip`, and then runs your FastAPI application using the provided `uvicorn` command. Additionally, it exposes port 8000 and opens a preview when the workspace starts.
