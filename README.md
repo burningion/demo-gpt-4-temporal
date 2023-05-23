@@ -16,11 +16,11 @@ The vector database can then be used to add your data / context to your prompt, 
 
 You'll need to make sure the following environment variables are set in Gitpod:
 
-`OPENAI_API_KEY` - OpenAI API key, grab one from [here](https://platform.openai.com/overview)
-`PINECONE_API_KEY` - Pinecone API key, grab one from [here](https://www.pinecone.io/)
-`PINECONE_ENVIRONMENT` - Pinecone environment, you'll have this after you create an index. (Should be something like `us-east4-gcp`)
-`PINECONE_INDEX` - The name of your actual Pinecone index
-`PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION` - Set this to `python`, as it's needed because of a gRPC bug
+- `OPENAI_API_KEY` - OpenAI API key, grab one from [here](https://platform.openai.com/overview)
+- `PINECONE_API_KEY` - Pinecone API key, grab one from [here](https://www.pinecone.io/)
+- `PINECONE_ENVIRONMENT` - Pinecone environment, you'll have this after you create an index. (Should be something like `us-east4-gcp`)
+- `PINECONE_INDEX` - The name of your actual Pinecone index
+- `PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION` - Set this to `python`, as it's needed because of a gRPC bug
 
 With these environment variables set, you're ready to run the application.
 
@@ -61,3 +61,9 @@ $ python3 ask-embeddings.py
 There's more in the accompanying blog post. 
 
 Otherwise, you can see the example output in the [gpt-4-output](gpt-4-output/) directory.
+
+# Running an Interactive Agent
+
+There's an interactive version of the GPT-4 API running by default in this repo. It's called `interactive-playground.py`.  
+
+You can use this to query GPT-4 via the API and keep track of the questions you ask over time.
