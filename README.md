@@ -58,4 +58,6 @@ Once you've created your knowledge base by running your Temporal Workflows, you 
 $ python3 ask-embeddings.py
 ```
 
-There's more in the accompanying blog post.
+There's more in the accompanying blog post. 
+
+Otherwise, you can see the example output in the [gpt-4-output](gpt-4-output/) directory.
