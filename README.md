@@ -1,5 +1,7 @@
 # Gitpod and Temporal Demo w/ GPT-4
 
+![Gitpod Temporal Environment](assets/ai-assistant.png)
+
 A demo using Gitpod and Temporal to demonstrate workflows
 
 Uses GPT-4 to retrieve docs and do an embedding for development based upon [this link](https://github.com/openai/openai-cookbook/blob/main/examples/vector_databases/pinecone/GPT4_Retrieval_Augmentation.ipynb).
