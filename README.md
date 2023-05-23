@@ -32,6 +32,8 @@ It uses Pinecone as our Vector database, so you'll need to create a database wit
 
 The free tier of Pinecone works well enough to run this example.
 
+![Gitpod Temporal Environment](assets/temporal.png)
+
 To run the Temporal workers you'll need to run the following:
 
 ```bash
