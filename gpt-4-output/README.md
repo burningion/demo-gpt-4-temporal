@@ -113,22 +113,35 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ## GPT-4 Augmented Query Output
 
-## Prompt: write a .gitpod.yml file for a fastapi python project. the application is named `main.py`, and the command to run it is `uvicorn main:app --host 0.0.0.0 --port 8000`. the other library dependencies are fastapi uvicorn python-dotenv python-social-auth boto3
+## Prompt: write a single .gitpod.yml file for a fastapi python project. the application is named `main.py`, and the command to run it is `uvicorn main:app --host 0.0.0.0 --port 8000`. the other library dependencies are fastapi uvicorn python-dotenv python-social-auth boto3. be sure to explain your work
 
 ## Augmented GPT-4 Output:
 
-Here's a .gitpod.yml file for your FastAPI Python project based on the provided information:
+Here's a `.gitpod.yml` file for your FastAPI Python project with an explanation of the configurations:
 
 ```yaml
-image: gitpod/workspace-python
+image:
+  # Use the default Python image
+  repository: gitpod/workspace-python
 
 tasks:
-  - init: pip install fastapi uvicorn python-dotenv python-social-auth boto3
-      command: uvicorn main:app --host 0.0.0.0 --port 8000
-          
+  # Install the dependencies specified in your requirements.txt file
+  - init: echo "fastapi uvicorn python-dotenv python-social-auth boto3" > requirements.txt && pip install -r requirements.txt
+  # Run the FastAPI application using uvicorn
+  - command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+# Expose the FastAPI application port
 ports:
   - port: 8000
-      onOpen: open-preview
+    onOpen: open-preview
 ```
 
-This configuration file sets up a Gitpod workspace with Python, installs the necessary dependencies using `pip`, and then runs your FastAPI application using the provided `uvicorn` command. Additionally, it exposes port 8000 and opens a preview when the workspace starts.
+Explanation:
+
+1. Use the Gitpod default Python image as the base image for your project.
+2. Create a `requirements.txt` file with the specified dependencies and install them using `pip`.
+3. Start the FastAPI application using `uvicorn` with the command provided (`uvicorn main:app --host 0.0.0.0 --port 8000`).
+4. Expose port 8000 and open the preview automatically when the application is running.
+
+With this configuration, after pushing your `.gitpod.yml` file to your repository, you can start a new Gitpod workspace, and it will automatically run the FastAPI application, install the dependencies,
+and expose the application on port 8000 with a preview.
