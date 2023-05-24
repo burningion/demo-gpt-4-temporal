@@ -34,7 +34,7 @@ def _get_local_path() -> Path:
 
 
 def write_file(path: Path, body: str) -> None:
-    """Convenience write wrapper for mocking FS"""
+    """Write to the filesystem"""
     with open(path, "w") as handle:
         handle.write(body)
 
@@ -52,7 +52,7 @@ def read_file(path, url) -> list:
 
 
 def delete_file(path) -> None:
-    """Convenience delete wrapper for mocking FS"""
+    """Convenience delete wrapper"""
     Path(path).unlink()
 
 
@@ -154,7 +154,7 @@ async def get_available_task_queue() -> str:
 
 @activity.defn
 async def download_file_to_worker_filesystem(details: DownloadObj) -> str:
-    """Simulates downloading a file to a local filesystem"""
+    """Download a URL to local filesystem"""
     # FS ops
     path = create_filepath(details.unique_worker_id, details.workflow_uuid)
     activity.logger.info(f"Downloading ${details.url} and saving to ${path}")
@@ -199,7 +199,7 @@ class FileProcessing:
         """Workflow implementing the basic file processing example.
 
         First, a worker is selected randomly. This is the "sticky worker" on which
-        the workflow runs. This consists of a file download and some processing task,
+        the workflow runs. This consists of a file download and the Pinecone pipeline,
         with a file cleanup if an error occurs.
         """
         workflow.logger.info("Searching for available worker")
