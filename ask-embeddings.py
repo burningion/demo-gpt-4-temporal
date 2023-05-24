@@ -2,6 +2,7 @@ import pinecone
 import openai
 import os
 import pprint
+from rich import print
 
 pp = pprint.PrettyPrinter(indent=2)
 
@@ -48,4 +49,4 @@ res = openai.ChatCompletion.create(
     ]
 )
      
-pp.pprint(res)
+print(res["choices"][0]["message"]["content"])
