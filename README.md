@@ -1,4 +1,4 @@
-# Gitpod and Temporal Demo w/ GPT-4
+# A Cloud Dev Assistant with GPT-4 and Pinecone on Gitpod
 
 ![Gitpod Temporal Environment](assets/ai-assistant.png)
 
@@ -60,7 +60,7 @@ Once you've created your knowledge base by running your Temporal Workflows, you 
 $ python3 ask-embeddings.py
 ```
 
-There's more in the accompanying blog post. 
+There's more in the accompanying [blog post](https://gitpod.io/blog/building-cloud-dev-assistants-with-gpt-4-on-gitpod). 
 
 Otherwise, you can see the example output in the [gpt-4-output](gpt-4-output/) directory.
 
@@ -69,3 +69,5 @@ Otherwise, you can see the example output in the [gpt-4-output](gpt-4-output/) d
 There's an interactive version of the GPT-4 API running by default in this repo. It's called `interactive-playground.py`.  
 
 You can use this to query GPT-4 via the API and keep track of the questions you ask over time.
+
+# Check out the [blog post](https://gitpod.io/blog/building-cloud-dev-assistants-with-gpt-4-on-gitpod)
