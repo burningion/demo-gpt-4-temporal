@@ -1,6 +1,4 @@
-image:
-  # Use the default Python image
-  repository: gitpod/workspace-python
+image: gitpod/workspace-python
 
 tasks:
   # Install the dependencies specified in your requirements.txt file
