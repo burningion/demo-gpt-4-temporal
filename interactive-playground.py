@@ -3,7 +3,7 @@ import os
 
 from textual.app import App, ComposeResult
 from textual.containers import Container
-from textual.widgets import Button, Header, Input, Footer, Static, TextLog
+from textual.widgets import Button, Header, Input, Footer, Static, RichLog
 from textual import events
 from textual.reactive import reactive
 
@@ -20,15 +20,15 @@ class GPTResponse(Static):
     """A widget to hold ChatGPT responses"""
 
     def compose(self) -> ComposeResult:
-        yield TextLog(highlight=True, markup=True, wrap=True)
+        yield RichLog(highlight=True, markup=True, wrap=True)
 
     def on_ready(self) -> None:
-        text_log = self.query_one(TextLog)
+        text_log = self.query_one(RichLog)
         text_log.write("Waiting for input to query ChatGPT")
         text_log.write("...")
 
     def on_key(self, event: events.Key) -> None:
-        text_log = self.query_one(TextLog)
+        text_log = self.query_one(RichLog)
         # text_log.write(event)
 
 class GPTApp(App):
@@ -43,7 +43,7 @@ class GPTApp(App):
             prompt = inny.value
             response = openai.ChatCompletion.create(model="gpt-4", messages=[
                 {"role": "user", "content": prompt}])
-            outty = self.query_one(TextLog)
+            outty = self.query_one(RichLog)
             outty.write(response["choices"][0]["message"]["content"])
 
     def compose(self) -> ComposeResult:
